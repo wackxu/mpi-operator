@@ -25,6 +25,7 @@ import (
 	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -39,10 +40,10 @@ import (
 	kubebatchfake "github.com/kubernetes-sigs/kube-batch/pkg/client/clientset/versioned/fake"
 	kubebatchinformers "github.com/kubernetes-sigs/kube-batch/pkg/client/informers/externalversions"
 
+	commonv1 "github.com/kubeflow/common/job_controller/api/v1"
 	kubeflow "github.com/kubeflow/mpi-operator/pkg/apis/kubeflow/v1alpha2"
 	"github.com/kubeflow/mpi-operator/pkg/client/clientset/versioned/fake"
 	informers "github.com/kubeflow/mpi-operator/pkg/client/informers/externalversions"
-	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 var (
@@ -85,7 +86,7 @@ func newFixture(t *testing.T) *fixture {
 }
 
 func newMPIJobCommon(name string, startTime, completionTime *metav1.Time) *kubeflow.MPIJob {
-	cleanPodPolicyAll := kubeflow.CleanPodPolicyAll
+	cleanPodPolicyAll := commonv1.CleanPodPolicyAll
 	mpiJob := &kubeflow.MPIJob{
 		TypeMeta: metav1.TypeMeta{APIVersion: kubeflow.SchemeGroupVersion.String()},
 		ObjectMeta: metav1.ObjectMeta{
@@ -93,7 +94,9 @@ func newMPIJobCommon(name string, startTime, completionTime *metav1.Time) *kubef
 			Namespace: metav1.NamespaceDefault,
 		},
 		Spec: kubeflow.MPIJobSpec{
-			CleanPodPolicy: &cleanPodPolicyAll,
+			RunPolicy: commonv1.RunPolicy{
+				CleanPodPolicy: &cleanPodPolicyAll,
+			},
 			MPIReplicaSpecs: map[kubeflow.MPIReplicaType]*kubeflow.ReplicaSpec{
 				kubeflow.MPIReplicaTypeWorker: {
 					Template: corev1.PodTemplateSpec{

@@ -52,6 +52,7 @@ import (
 	clientset "github.com/kubeflow/mpi-operator/pkg/client/clientset/versioned"
 	informers "github.com/kubeflow/mpi-operator/pkg/client/informers/externalversions/kubeflow/v1alpha2"
 	listers "github.com/kubeflow/mpi-operator/pkg/client/listers/kubeflow/v1alpha2"
+	commonv1 "github.com/kubeflow/common/job_controller/api/v1"
 )
 
 const (
@@ -1271,8 +1272,8 @@ func isJobFinished(j *batchv1.Job) bool {
 	return false
 }
 
-func isCleanUpPods(cleanPodPolicy *kubeflow.CleanPodPolicy) bool {
-	if *cleanPodPolicy == kubeflow.CleanPodPolicyAll || *cleanPodPolicy == kubeflow.CleanPodPolicyRunning {
+func isCleanUpPods(cleanPodPolicy *commonv1.CleanPodPolicy) bool {
+	if *cleanPodPolicy == commonv1.CleanPodPolicyAll || *cleanPodPolicy == commonv1.CleanPodPolicyRunning {
 		return true
 	}
 	return false

@@ -15,6 +15,7 @@
 package v1alpha2
 
 import (
+	commonv1 "github.com/kubeflow/common/job_controller/api/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -37,28 +38,15 @@ type MPIJobList struct {
 }
 
 type MPIJobSpec struct {
+	// RunPolicy encapsulates various runtime policies of the distributed training
+	// job, for example how to clean up resources and how long the job can stay
+	// active.
+	commonv1.RunPolicy
 
 	// Specifies the number of slots per worker used in hostfile.
 	// Defaults to 1.
 	// +optional
 	SlotsPerWorker *int32 `json:"slotsPerWorker,omitempty"`
-
-	// TODO: Move this to `RunPolicy` in common operator, see discussion in https://github.com/kubeflow/tf-operator/issues/960
-	// Specifies the number of retries before marking this job failed.
-	// Defaults to 6.
-	// +optional
-	BackoffLimit *int32 `json:"backoffLimit,omitempty"`
-
-	// TODO: Move this to `RunPolicy` in common operator, see discussion in https://github.com/kubeflow/tf-operator/issues/960
-	// Specifies the duration in seconds relative to the start time that
-	// the job may be active before the system tries to terminate it.
-	// Note that this takes precedence over `BackoffLimit` field.
-	// +optional
-	ActiveDeadlineSeconds *int64 `json:"activeDeadlineSeconds,omitempty"`
-
-	// CleanPodPolicy defines the policy that whether to kill pods after the job completes.
-	// Defaults to None.
-	CleanPodPolicy *CleanPodPolicy `json:"cleanPodPolicy,omitempty"`
 
 	// `MPIReplicaSpecs` contains maps from `MPIReplicaType` to `ReplicaSpec` that
 	// specify the MPI replicas to run.
